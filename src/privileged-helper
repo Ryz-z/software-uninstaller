@@ -1,0 +1,150 @@
+#!/usr/bin/python3
+"""提权助手：只负责在 root 侧再校验一次，然后执行白名单内的卸载命令。
+
+由 pkexec 调用：pkexec /usr/lib/software-uninstaller/privileged-helper apt-get purge -y 包名
+任何不在白名单内的命令、任何不合法的参数，一律拒绝执行。
+"""
+
+import os
+import subprocess
+import sys
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+SRC = os.path.join(HERE, "src")
+if os.path.isdir(SRC) and SRC not in sys.path:
+    sys.path.insert(0, SRC)
+
+from core.safety import critical_reason  # noqa: E402
+from core.validation import (  # noqa: E402
+    path_allowed_for_rm,
+    safe_flag,
+    valid_arg,
+    valid_name,
+)
+
+# 命令白名单：命令名 -> (校验类型, 是否涉及路径)
+ALLOWED = {
+    "apt-get": "apt",
+    "apt": "apt",
+    "dpkg": "apt",
+    "snap": "snap",
+    "flatpak": "flatpak",
+    "npm": "npm",
+    "pip3": "pip",
+    "pip": "pip",
+    "gem": "gem",
+    "conda": "conda",
+    "brew": "brew",
+    "nix-env": "nix",
+    "guix": "guix",
+    "distrobox-rm": "distrobox",
+    "docker": "docker",
+    "rm": "path",
+    "make": "make",
+    "update-desktop-database": "path",
+    "bash": "script",
+    "sh": "script",
+}
+
+# 允许以 root 执行的卸载脚本名特征
+SCRIPT_HINTS = ("uninstall", "remove")
+
+# 允许的包管理器固定参数
+PKG_FLAGS = {
+    "-y", "--yes", "--purge", "--autoremove", "--delete-data", "-f", "--force",
+    "--force-yes", "--cask", "--formula", "-q", "--quiet", "-x", "-I",
+    "--ignore-dependencies", "-g", "--global", "-n", "--name", "-s", "--simulate",
+    "--no-install-recommends", "--allow-remove-essential=no", "-o",
+    "uninstall", "remove", "purge", "rmi", "rm", "images", "ps",
+}
+
+
+def die(msg: str) -> None:
+    sys.stderr.write("privileged-helper: 拒绝执行 —— " + msg + "\n")
+    sys.exit(2)
+
+
+def main() -> int:
+    argv = sys.argv[1:]
+    if not argv:
+        die("没有提供命令")
+
+    program = argv[0]
+    # 允许传入绝对路径
+    base = os.path.basename(program)
+    if base not in ALLOWED:
+        die(f"命令不在白名单内：{program}")
+
+    kind = ALLOWED[base]
+    args = argv[1:]
+
+    if kind == "path":
+        for a in args:
+            if a.startswith("-"):
+                if a not in {"-f", "-rf", "-fr", "-r", "--force", "-v"}:
+                    die(f"不允许的参数：{a}")
+                continue
+            if not path_allowed_for_rm(a):
+                die(f"目标路径不在允许删除的范围内：{a}")
+    elif kind == "make":
+        skip_next = False
+        for a in args:
+            if skip_next:
+                skip_next = False
+                # make -C 的目录参数：必须是存在的目录
+                if not os.path.isdir(a):
+                    die(f"make -C 的目录不存在：{a}")
+                continue
+            if a.startswith("-"):
+                if a in ("-C", "-C."):
+                    skip_next = True
+                    continue
+                if a.startswith("-C") and len(a) > 2:
+                    continue
+                if a not in {"-s", "-k", "-j", "-j4", "-j8"}:
+                    die(f"不允许的参数：{a}")
+            elif a not in {"uninstall", "remove"}:
+                die(f"make 目标不允许：{a}")
+    elif kind == "script":
+        for a in args:
+            if a.startswith("-"):
+                die(f"不允许的参数：{a}")
+            if not path_allowed_for_rm(a):
+                die(f"脚本路径不在允许范围内：{a}")
+            base = os.path.basename(a).lower()
+            if not any(h in base for h in SCRIPT_HINTS):
+                die(f"只允许执行卸载/移除脚本：{a}")
+            if not os.path.isfile(a):
+                die(f"脚本不存在：{a}")
+    else:
+        for a in args:
+            if a.startswith("-"):
+                if a not in PKG_FLAGS and not safe_flag(a):
+                    die(f"不允许的参数：{a}")
+                continue
+            if not valid_arg(a):
+                die(f"参数含非法字符：{a}")
+            if not valid_name(kind, a):
+                die(f"{kind} 包名校验失败：{a}")
+            reason = critical_reason(_map_source(kind), a)
+            if reason:
+                die(f"{a} 属于系统关键组件：{reason}")
+
+    # 执行前打印，便于审计
+    sys.stdout.write("执行（root）：" + " ".join([base] + args) + "\n")
+    sys.stdout.flush()
+
+    proc = subprocess.run([base] + args)
+    return proc.returncode
+
+
+def _map_source(kind: str) -> str:
+    return {
+        "apt": "apt", "snap": "snap", "flatpak": "flatpak", "npm": "npm",
+        "pip": "pip", "gem": "gem", "conda": "conda", "brew": "brew",
+        "nix": "nix", "guix": "guix", "distrobox": "distrobox", "docker": "docker",
+    }.get(kind, "unknown")
+
+
+if __name__ == "__main__":
+    sys.exit(main())

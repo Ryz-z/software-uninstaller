@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4a90d9"/>
+      <stop offset="1" stop-color="#1c6bb8"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="56" height="56" rx="13" fill="url(#g)"/>
+  <!-- 回收站桶身 -->
+  <path d="M23 24 h18 l-2.2 25 a4 4 0 0 1-4 3.6 h-5.6 a4 4 0 0 1-4-3.6 z"
+        fill="#ffffff" opacity="0.95"/>
+  <!-- 桶盖 -->
+  <rect x="20.5" y="19" width="23" height="4.6" rx="2.3" fill="#ffffff"/>
+  <!-- 提手 -->
+  <rect x="29.4" y="13.5" width="5.2" height="4.4" rx="2.2" fill="#ffffff"/>
+  <!-- 竖线 -->
+  <g stroke="#1c6bb8" stroke-width="2.1" stroke-linecap="round">
+    <line x1="28" y1="29" x2="28.8" y2="46"/>
+    <line x1="36" y1="29" x2="35.2" y2="46"/>
+  </g>
+</svg>

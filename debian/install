@@ -1,0 +1,5 @@
+src usr/lib/software-uninstaller
+bin/software-uninstaller usr/bin
+data/software-uninstaller.desktop usr/share/applications
+data/software-uninstaller.policy usr/share/polkit-1/actions
+data/icons/hicolor/scalable/apps/software-uninstaller.svg usr/share/icons/hicolor/scalable/apps

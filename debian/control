@@ -1,0 +1,23 @@
+Source: software-uninstaller
+Section: utils
+Priority: optional
+Maintainer: Zhang <a672377745@gmail.com>
+Build-Depends: debhelper-compat (= 13), dh-python, python3
+Standards-Version: 4.6.2
+Rules-Requires-Root: no
+Homepage: https://github.com/Ryz-z/software-uninstaller
+
+Package: software-uninstaller
+Architecture: all
+Multi-Arch: foreign
+Depends: ${misc:Depends}, python3 (>= 3.8), python3-gi, gir1.2-gtk-4.0, polkitd | policykit-1
+Recommends: flatpak, snapd
+Suggests: python3-tk, npm, cargo, python3-pip, rubygems, distrobox, docker.io
+Description: 图形化软件卸载工具（自动识别安装来源）
+ 图形化浏览与搜索已安装的应用和命令行工具，自动识别其安装来源
+ （APT、Snap、Flatpak、Homebrew、Nix、Guix、pip、npm、cargo、go、gem、
+ conda、Distrobox、Docker、AppImage、源码编译、脚本安装、本地快捷方式），
+ 展示将要执行的卸载命令，并在二次确认后执行。
+ .
+ 内置安全策略：系统关键包禁止卸载、包名正则校验、rm 路径白名单、
+ 提权操作统一走 pkexec + 白名单助手（root 侧二次校验）。

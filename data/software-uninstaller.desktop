@@ -1,0 +1,16 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=软件卸载工具
+Name[en_US]=Software Uninstaller
+GenericName=软件卸载
+GenericName[en_US]=Software Uninstaller
+Comment=检测软件的安装来源（APT / Snap / Flatpak / AppImage / pip / npm …）并安全卸载
+Comment[en_US]=Detect how apps were installed and remove them safely
+Exec=software-uninstaller
+Icon=software-uninstaller
+Terminal=false
+StartupNotify=true
+StartupWMClass=SoftwareUninstaller
+Categories=System;Settings;PackageManager;Utility;
+Keywords=卸载;移除;删除;uninstall;remove;purge;snap;flatpak;appimage;

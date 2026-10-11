@@ -1,0 +1,30 @@
+software-uninstaller (1.0.2) stable; urgency=medium
+
+  * 修复：勾选“同时清理不再需要的依赖”时详情面板被整体重建，导致卸载命令预览消失
+    —— 详情面板改为一次构建、只更新内容，勾选后仅刷新预览文本与按钮状态。
+  * 修复：点击“卸载此软件”无任何反应 —— 二次确认对话框创建后未调用 present()
+    （GTK4 窗口默认隐藏）；同时为“不允许卸载”等情况补上可见提示。
+  * 新增：搜索支持拼音（全拼 jisuanqi / 首字母 jsq / 部分拼音 suan），
+    内置 8105 字离线拼音表，无需第三方依赖。
+
+ -- Zhang <a672377745@gmail.com>  Sun, 11 Oct 2026 17:45:00 +0800
+
+software-uninstaller (1.0.1) stable; urgency=medium
+
+  * 修复依赖：Ubuntu 24.10+ 已移除 policykit-1，改为 polkitd | policykit-1，
+    解决在 Ubuntu 26.04 上“依赖: policykit-1 但无法安装它”的问题。
+  * 将 npm / cargo / python3-pip / rubygems / distrobox / docker.io 移入 Suggests，
+    缺少它们时不再干扰安装。
+
+ -- Zhang <a672377745@gmail.com>  Sun, 11 Oct 2026 17:05:00 +0800
+
+software-uninstaller (1.0.0) stable; urgency=medium
+
+  * 首个版本：图形化浏览 / 搜索已安装应用与命令行工具。
+  * 支持 17 种安装来源检测（APT / Snap / Flatpak / Homebrew / Nix / Guix /
+    pip / npm / cargo / go / gem / conda / Distrobox / Docker / AppImage /
+    源码编译 / 脚本安装 / 本地快捷方式）。
+  * 卸载前展示命令预览与二次确认，实时输出执行日志。
+  * 安全策略：关键包禁止卸载、包名正则校验、rm 路径白名单、pkexec 提权助手。
+
+ -- Zhang <a672377745@gmail.com>  Sun, 11 Oct 2026 16:00:00 +0800

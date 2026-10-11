@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# 构建产物
+build/
+dist/
+debian/.debhelper/
+debian/files
+debian/*.substvars
+debian/software-uninstaller/
+../*.deb
+*.deb
+*.dsc
+*.buildinfo
+*.changes
+*.tar.*z
+
+# 原始拼音数据（166KB，需要时用 tools/gen_pinyin_data.py 重新生成）
+pinyin_raw.txt
+
+# 编辑器 / 系统
+.vscode/
+.idea/
+*.swp
+.DS_Store

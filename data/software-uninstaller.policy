@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE policyconfig PUBLIC "-//freedesktop//DTD PolicyKit Policy Configuration 1.0//EN"
+  "http://www.freedesktop.org/standards/PolicyKit/1/policyconfig.dtd">
+<policyconfig>
+  <vendor>Software Uninstaller</vendor>
+  <vendor_url>https://github.com/Ryz-z/software-uninstaller</vendor_url>
+
+  <action id="org.freedesktop.policykit.pkexec.software-uninstaller-helper">
+    <description>运行软件卸载工具的提权助手</description>
+    <message>软件卸载工具需要管理员权限才能执行卸载命令</message>
+    <defaults>
+      <allow_any>auth_admin</allow_any>
+      <allow_inactive>auth_admin</allow_inactive>
+      <allow_active>auth_admin</allow_active>
+    </defaults>
+    <annotate key="org.freedesktop.policykit.exec.path">/usr/lib/software-uninstaller/src/privileged-helper</annotate>
+    <annotate key="org.freedesktop.policykit.exec.allow_gui">true</annotate>
+  </action>
+</policyconfig>

@@ -1,0 +1,17 @@
+#!/usr/bin/make -f
+# 纯 Python 项目，无需编译；仅做文件安装。
+
+%:
+	dh $@
+
+override_dh_auto_build:
+	@echo "纯 Python 项目：跳过编译"
+
+override_dh_auto_test:
+	@echo "跳过自动测试"
+
+override_dh_auto_clean:
+	rm -rf build/ dist/ *.egg-info
+
+override_dh_usrlocal:
+	@true

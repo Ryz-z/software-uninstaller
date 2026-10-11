@@ -1,0 +1,10 @@
+#!/bin/sh
+# 软件卸载工具启动包装脚本
+set -e
+APP_DIR="/usr/lib/software-uninstaller/src"
+if [ -d "$APP_DIR" ]; then
+    exec /usr/bin/python3 "$APP_DIR/main.py" "$@"
+else
+    echo "未找到程序文件：$APP_DIR/main.py" >&2
+    exit 1
+fi
